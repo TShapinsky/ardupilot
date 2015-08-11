@@ -423,3 +423,11 @@ bool Copter::guided_limit_check()
     // if we got this far we must be within limits
     return false;
 }
+static uint32_t vel_update_time_ms;
+    vel_update_time_ms = millis();
+
+    // set velocity to zero if no updates received for 3 seconds
+    uint32_t tnow = millis();
+    if (tnow - vel_update_time_ms > GUIDED_POSVEL_TIMEOUT_MS && !pos_control.get_desired_velocity().is_zero()) {
+        pos_control.set_desired_velocity(Vector3f(0,0,0));
+    }
